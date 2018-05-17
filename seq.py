@@ -9,6 +9,12 @@ class Memory:
 	def __init__(self, addr, isInstr):
 		self.address = addr
 		self.isInstr = isInstr
+
+	def __str__(self):
+		yn = "Yes"
+		if not self.isInstr:
+			yn = "No"
+		return "address:{} \n     instruction?: {}".format(self.address, yn)
 		
 class SEQ:
 	def __init__(self, file):
@@ -45,8 +51,8 @@ class SEQ:
 		addr = 0
 		self.memscan(file, pos, tags)
 		self.instrscan(file, pos, tags)
-		#print(tags)
-				
+		for k, v in tags.items():
+			print(k,str(v))				
 
 	#check for quads and pos and tags
 	def memscan(self, file, pos, tag):
@@ -74,23 +80,18 @@ class SEQ:
 							self.throwError(ln)
 						
 					else:
-						self.throwError(line)
-				elif txt[0] == '.quad':
-					if txt[1].isdigit():
-						num = int(txt[1])
-						if num >= 0:
-							if lastInstr[len(lastInstr) - 1] == ':':
-								tag[lastInstr] = Memory(0, False)
-
-						else:
-							self.throwError(ln)
+						self.throwError(ln)
+				elif txt[0] == '.quad':				
+						if lastInstr[len(lastInstr) - 1] == ':':
+							tag[lastInstr] = Memory(0, False)
 						
-					else:
-						pos.append(txt[1])
-
+					
 				elif txt[0][n-1] == ':':
 					if lastInstr == '.pos':
 						tag[txt[0]] = Memory(pos[len(pos)-1], False) #last pos put in
+
+					elif lastInstr == '.quad':
+						tag[txt[0]] = Memory(0, False)
 					else:
 						tag[txt[0]] = Memory(0, True)
 				lastInstr = txt[0]
@@ -112,7 +113,7 @@ class SEQ:
 					    if not tag[txt[0]].isInstr:
 					        ln += 1
 					        continue
-					    tag[txt[0]] = address #tag already gotten by memscan
+					    tag[txt[0]] = Memory(address, True) #tag already gotten by memscan
 					    if len(txt) > 1:
 						    if txt[1]:
 						    	if txt[1] in self.valid_instr:
@@ -132,21 +133,9 @@ class SEQ:
 						self.throwError(ln)
 				ln += 1
 
-
-
-
-		pass
-
 def main():
 	s = SEQ("ldriver.ys")
-	for k, v in s.IM.items():
-		print(k, " :", v)
+	# for k, v in s.IM.items():
+	# 	print(k, " :", v)
 
 main()
-
-
-
-
-
-
-
