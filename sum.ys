@@ -1,0 +1,47 @@
+#Stephen Aigbomian
+#UT-EID: sa46979
+# Execution begins at address 0 
+	.pos 0
+	irmovq stack, %rsp  	# Set up stack pointer
+	call main		# Execute main program
+	halt			# Terminate program 
+
+# Linked List of 3 elements
+.align 8
+ele1:
+	.quad 0x00a
+	.quad ele2
+ele2:
+	.quad 0x0b0
+	.quad ele3
+ele3:
+	.quad 0xc00
+	.quad 0
+
+main:
+    irmovq ele1,%rdi
+	call sum_list		# sum_list(ele1)
+	ret
+
+sum_list:
+	rrmovq %rdi, %rsi  
+	xorq %rax, %rax	  
+	andq %rdi, %rdi	
+	je L4
+
+L3:	
+	mrmovq (%rsi), %rdx
+	addq %rdx, %rax
+	mrmovq 8(%rsi), %rsi
+	andq %rsi, %rsi
+	jne L3
+	ret
+
+L4:
+	ret
+	.pos 0x200
+stack:
+
+	 
+
+	
